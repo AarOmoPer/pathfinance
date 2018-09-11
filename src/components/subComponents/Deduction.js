@@ -2,19 +2,19 @@ import React from 'react';
 
 class Deductions extends React.Component {
   render() {
-    const { deductionData, removeDeduction} = this.props
+    const { deductionData, removeDeduction } = this.props
     return (
       <section>
-        
+
         <table>
-          <thead>
-            <th>#</th>
-            <th>Description of deduction</th>
-            <th>Amount paid</th>
-            <th>Remove deduction</th>
-          </thead>
           <tbody>
-            {deductionData.map((deduction, index) => <tr>
+            <tr>
+              <th>#</th>
+              <th>Description of deduction</th>
+              <th>Amount paid</th>
+              <th>Remove deduction</th>
+            </tr>
+            {deductionData.map((deduction, index) => <tr key={index}>
               <td>{index + 1}</td>
               <td>{deduction.description}</td>
               <td>{deduction.value}</td>
@@ -27,7 +27,7 @@ class Deductions extends React.Component {
     )
   }
 
- 
+
 
   handleNewDeductionSubmit = event => {
     const { addDeduction } = this.props;

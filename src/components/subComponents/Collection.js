@@ -14,7 +14,7 @@ class Collection extends React.Component {
     const { newPayment } = this.state;
     const { collectionTitle, contributors, breakdown } = this.props
     const { removeContribution, updateCardCheque, updateCash } = this.props
-    const {cheque, cash, card } = breakdown
+    const { cheque, cash, card } = breakdown
     return (
       <section>
         <hr />
@@ -36,14 +36,14 @@ class Collection extends React.Component {
             {!!contributors.length &&
               <section>
                 <table>
-                  <thead>
-                    <th>#</th>
-                    <th>Full name</th>
-                    <th>Amount paid</th>
-                    <th>Payment method</th>
-                    <th>Remove payment</th>
-                  </thead>
                   <tbody>
+                    <tr>
+                      <th>#</th>
+                      <th>Full name</th>
+                      <th>Amount paid</th>
+                      <th>Payment method</th>
+                      <th>Remove payment</th>
+                    </tr>
                     {contributors.map((contribution, index) =>
                       <tr key={index}>
                         <td>{index + 1}</td>
