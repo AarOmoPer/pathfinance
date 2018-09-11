@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Home, NewReport, ExistingReport} from './pageComponents'
+import {Home, CreateReport, ViewReport} from './pageComponents'
 
 class App extends React.Component{
   render(){
@@ -8,7 +8,7 @@ class App extends React.Component{
       <section>
         {/* <h1>Hello World!</h1> */}
         {/* <Home /> */}
-        <NewReport />
+        <CreateReport />
       </section>
     )
   }

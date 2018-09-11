@@ -1,9 +1,9 @@
 import Home from './Home';
-import NewReport from './NewReport';
-import ExistingReport from './ExistingReport'
+import CreateReport from './CreateReport';
+import ViewReport from './ViewReport'
 
 export {
   Home,
-  NewReport,
-  ExistingReport
+  CreateReport,
+  ViewReport
 }
