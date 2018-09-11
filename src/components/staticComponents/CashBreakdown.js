@@ -2,7 +2,7 @@ import React from 'react';
 
 class CashBreakdown extends React.Component {
   render() {
-    const { collectionTitle, breakdown, updateCashBreakdown } = this.props
+    const { collectionTitle, cashData, updateCash } = this.props
     return (
       <section>
         <table>
@@ -14,17 +14,17 @@ class CashBreakdown extends React.Component {
             </tr>
           </thead>
           <tbody>
-            {breakdown.map((denomination, index) =>
+            {Object.keys(cashData).sort((a, b) => Number(b) - Number(a)).map((denomination, index) =>
               <tr key={index}>
-                <td>{`£${denomination.value.toFixed(2)}`}</td>
+                <td>{`£${Number(denomination / 100).toFixed(2)}`}</td>
                 <td>
                   <input
                     type='number'
-                    value={denomination.quantity || ''}
+                    value={cashData[denomination] || ''}
                     placeholder='0'
-                    onChange={event => updateCashBreakdown(collectionTitle, index, event)} />
+                    onChange={event => updateCash(collectionTitle, denomination, event)} />
                 </td>
-                <td style={{'minWidth': '120px'}}>{(denomination.value * denomination.quantity).toFixed(2)}</td>
+                <td style={{'minWidth': '120px'}}>£{(Number(denomination) * cashData[denomination] / 100).toFixed(2)}</td>
               </tr>
             )}
           </tbody>

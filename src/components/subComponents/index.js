@@ -1,7 +1,7 @@
-import NewCollection from './NewCollection';
-import Deductions from './Deductions';
+import Collection from './Collection';
+import Deduction from './Deduction';
 
 export{
-  NewCollection,
-  Deductions
+  Collection,
+  Deduction
 }
