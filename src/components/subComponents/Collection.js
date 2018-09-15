@@ -15,10 +15,11 @@ class Collection extends React.Component {
     const { collectionTitle, contributors, breakdown } = this.props
     const { removeContribution, updateCardCheque, updateCash } = this.props
     const { cheque, cash, card } = breakdown
+    const collectionTotal = this.calculateCollectionTotal(breakdown)
     return (
       <section>
         <hr />
-        <h3>{collectionTitle}</h3>
+        <h3>{collectionTitle} -  £{(collectionTotal.collectionTotal / 100).toFixed(2)}</h3>
         {/* Contributors */}
         <section>
           <label>Add a new contributor:</label>
@@ -33,7 +34,7 @@ class Collection extends React.Component {
             <button type='submit'>add payment</button>
           </form>
           <section>
-            {!!contributors.length &&
+            {contributors && !!contributors.length &&
               <section>
                 <table>
                   <tbody>
@@ -62,20 +63,20 @@ class Collection extends React.Component {
         {/* Breakdown */}
         <section>
           <form>
-            <h4>Cheque</h4>
+            <h4>Cheque -  £{(collectionTotal.chequeTotal / 100).toFixed(2)}</h4>
             <input type='number' placeholder='quantity' value={cheque.quantity || ""} onChange={event => updateCardCheque(collectionTitle, 'cheque', 'quantity', event)} />
-            <input type='number' placeholder='value' value={cheque.value || ""} onChange={event => updateCardCheque(collectionTitle, 'cheque', 'value', event)} />
+            <input type='number' placeholder='value' value={cheque.value / 100 || ""} onChange={event => updateCardCheque(collectionTitle, 'cheque', 'value', event)} />
           </form>
 
           <section>
-            <h4>Cash</h4>
+            <h4>Cash  -  £{(collectionTotal.cashTotal / 100).toFixed(2)}</h4>
             <CashBreakdown collectionTitle={collectionTitle} cashData={cash} updateCash={updateCash} />
           </section>
 
           <form>
-            <h4>Card</h4>
+            <h4>Card -  £{(collectionTotal.cardTotal / 100).toFixed(2)}</h4>
             <input type='number' placeholder='quantity' value={card.quantity || ""} onChange={event => updateCardCheque(collectionTitle, 'card', 'quantity', event)} />
-            <input type='number' placeholder='value' value={card.value || ""} onChange={event => updateCardCheque(collectionTitle, 'card', 'value', event)} />
+            <input type='number' placeholder='value' value={card.value / 100 || ""} onChange={event => updateCardCheque(collectionTitle, 'card', 'value', event)} />
           </form>
         </section>
         <hr />
@@ -94,6 +95,16 @@ class Collection extends React.Component {
     const { newPayment } = this.state;
     const { collectionTitle, addContribution } = this.props
     if (newPayment.fullName && newPayment.amountPaid) addContribution(collectionTitle, Object.assign({}, newPayment))
+  }
+
+  calculateCollectionTotal = breakdown => {
+    const cardTotal = breakdown.card.value;
+    const chequeTotal = breakdown.cheque.value;
+    let cashTotal = 0
+    for (const denomination in breakdown.cash){
+      cashTotal += Number(denomination) * breakdown.cash[denomination]
+    }
+    return {cashTotal, chequeTotal, cardTotal, collectionTotal: cashTotal + chequeTotal + cardTotal}
   }
 
 }

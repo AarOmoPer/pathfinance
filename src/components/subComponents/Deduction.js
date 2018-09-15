@@ -5,29 +5,25 @@ class Deductions extends React.Component {
     const { deductionData, removeDeduction } = this.props
     return (
       <section>
-
         <table>
-          <tbody>
+          {!!Object.keys(deductionData).length && <tbody>
             <tr>
               <th>#</th>
               <th>Description of deduction</th>
               <th>Amount paid</th>
               <th>Remove deduction</th>
             </tr>
-            {deductionData.map((deduction, index) => <tr key={index}>
+            {Object.keys(deductionData).map((deductionKey, index) => <tr key={index}>
               <td>{index + 1}</td>
-              <td>{deduction.description}</td>
-              <td>{deduction.value}</td>
-              <td onClick={removeDeduction}>Remove</td>
+              <td>{deductionData[deductionKey].description}</td>
+              <td>{deductionData[deductionKey].value}</td>
+              <td onClick={() => removeDeduction(deductionKey)}>Remove</td>
             </tr>)}
-          </tbody>
+          </tbody>}
         </table>
-        <hr />
       </section>
     )
   }
-
-
 
   handleNewDeductionSubmit = event => {
     const { addDeduction } = this.props;

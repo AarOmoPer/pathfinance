@@ -1,5 +1,6 @@
 import React from 'react';
 import Moment from 'moment';
+import {db} from '../../firebase'
 import { Collection, Deduction } from '../subComponents'
 
 class CreateReport extends React.Component {
@@ -15,9 +16,17 @@ class CreateReport extends React.Component {
     collections: {},
     deductions: [],
   }
+
+  componentDidMount(){
+    const {reportDate} = this.state;
+    db.getReportData(Moment(reportDate).format('YYYY-MM-DD'), reportData => this.setState({...reportData}))
+  }
+
   render() {
     const { newCollection, newDeduction, reportDate, collections, deductions } = this.state
     const collectionMethods = { addContribution: this.addContribution, removeContribution: this.removeContribution, updateCardCheque: this.updateCardCheque, updateCash: this.updateCash }
+    const reportTotal = this.calculateReportTotal(collections, deductions)
+    // const deductionTotal = this.calculateDeductionTotal(deductions)
     return (
       <section>
         <h2>{Moment(reportDate).format('dddd, MMMM Do YYYY HH:ss')}</h2>
@@ -30,9 +39,7 @@ class CreateReport extends React.Component {
             <button type='submit'>Add collection</button>
           </form>
           <section>
-            {
-              Object.values(collections).map((collection, index) => <Collection key={index} {...collection} {...collectionMethods} />)
-            }
+            {Object.values(collections).map((collection, index) => <Collection key={index} {...collection} {...collectionMethods} />)}
           </section>
         </section>
 
@@ -41,16 +48,19 @@ class CreateReport extends React.Component {
           <label >Add new a deduction:</label>
           <form onSubmit={this.addDeduction}>
             <input value={newDeduction.description} onChange={event => this.handleNewDeductionPropChange('description', event)} placeholder='description' />
-            <input type='number' value={newDeduction.value} onChange={event => this.handleNewDeductionPropChange('value', event)} placeholder='amount paid' />
+            <input type='number' value={newDeduction.value || ''} onChange={event => this.handleNewDeductionPropChange('value', event)} placeholder='amount paid' />
             <button type='submit'>Add deduction</button>
           </form>
           <section>
-            {
-              deductions.map((deduction, index) => <Deduction key={index} deductionData={deductions} removeDeduction={() => this.removeDeduction(index)}/>)
-            }
+            <Deduction deductionData={deductions} removeDeduction={this.removeDeduction}/>
           </section>
         </section>
 
+        <section>
+          <h3>Total</h3>
+          <label></label>
+        </section>
+        <hr />
       </section>
     )
   }
@@ -69,59 +79,27 @@ class CreateReport extends React.Component {
   // Report methods
   addCollection = event => {
     event.preventDefault()
-    const { newCollection, collections } = this.state;
-    if (!(newCollection.title in collections)) {
-      collections[newCollection.title.toLowerCase()] = this.generateNewCollectionObject(newCollection.title)
-      newCollection.title = ''
-      this.setState({ newCollection, collections })
-    }
+    const { newCollection, reportDate } = this.state;
+    db.addCollection(Moment(reportDate).format('YYYY-MM-DD'), newCollection.title)
   }
-  removeCollection = collectionTitle => {
-    const { collections } = this.state
-    delete collections[collectionTitle.toLowerCase()]
-    this.setState({ collections })
-  }
+
+  // removeCollection = collectionTitle => {
+  //   const { collections } = this.state
+  //   delete collections[collectionTitle.toLowerCase()]
+  //   this.setState({ collections })
+  // }
+
   addDeduction = event => {
     event.preventDefault()
-    const { newDeduction, deductions } = this.state;
-    deductions.push(Object.assign({}, newDeduction));
-    newDeduction.description = ''
-    newDeduction.value = 0
-    this.setState({ newDeduction, deductions })
+    const { newDeduction, reportDate } = this.state;
+    db.addDeduction(Moment(reportDate).format('YYYY-MM-DD'), newDeduction)
   }
+
   removeDeduction = deductionIndex => {
     const { deductions } = this.state;
     const filteredDeductions = deductions.filter((deduction, index) => index !== deductionIndex)
     this.setState({ deductions: [...filteredDeductions] })
   }
-  generateNewCollectionObject = collectionTitle => Object.assign({}, {
-    collectionTitle,
-    contributors: [],
-    breakdown: {
-      cheque: {
-        quantity: 0,
-        value: 0
-      },
-      cash: {
-        5000: 0,
-        2000: 0,
-        1000: 0,
-        500: 0,
-        200: 0,
-        100: 0,
-        50: 0,
-        20: 0,
-        10: 0,
-        5: 0,
-        2: 0,
-        1: 0
-      },
-      card: {
-        quantity: 0,
-        value: 0
-      }
-    }
-  })
 
 
   // Collection methods
@@ -137,13 +115,29 @@ class CreateReport extends React.Component {
   }
   updateCardCheque = (collectionTitle, paymentMethod, prop, event) => {
     const { collections } = this.state;
-    collections[collectionTitle.toLowerCase()]['breakdown'][paymentMethod][prop] = Number(event.target.value);
+    collections[collectionTitle.toLowerCase()]['breakdown'][paymentMethod][prop] = prop==='value' ? Number(event.target.value) * 100 : Number(event.target.value);
     this.setState({ collections })
   }
   updateCash = (collectionTitle, denomination, event) => {
     const { collections } = this.state;
     collections[collectionTitle.toLowerCase()]['breakdown']['cash'][denomination] = Number(event.target.value);
     this.setState({ collections });
+  }
+
+  calculateDeductionTotal = deductions => deductions.reduce((acc, deduction) => acc += deduction.value, 0)
+
+  calculateReportTotal = collections => {
+    let cardTotal = 0;
+    let chequeTotal = 0;
+    let cashTotal = 0
+    for (const collection in collections){
+      cardTotal += collections[collection].breakdown.card.value
+      chequeTotal += collections[collection].breakdown.cheque.value
+      for (const denomination in collections[collection].breakdown.cash){
+        cashTotal += Number(denomination) * collections[collection].breakdown.cash[denomination]
+      }
+    }
+    return {cashTotal, chequeTotal, cardTotal, reportTotal: cashTotal + chequeTotal + cardTotal}
   }
 }
 
