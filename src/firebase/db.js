@@ -17,8 +17,6 @@ export const updateCash = (reportDate, collectionTitle, denomination, value) => 
 
 
 
-
-
 const generateNewCollectionObject = collectionTitle => Object.assign({}, {
   collectionTitle,
   contributors: [],

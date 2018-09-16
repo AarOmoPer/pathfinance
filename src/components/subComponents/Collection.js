@@ -1,6 +1,6 @@
 import React from 'react';
 import {db} from '../../firebase'
-import { CashBreakdown } from '../staticComponents'
+import { CashBreakdown, CollectionContributors } from '../staticComponents'
 
 class Collection extends React.Component {
   state = {
@@ -18,6 +18,7 @@ class Collection extends React.Component {
       <section>
         <hr />
         <h3>{collectionTitle}</h3>
+
         {/* Contributors */}
         <section>
           <label>Add a new contributor:</label>
@@ -31,33 +32,9 @@ class Collection extends React.Component {
             </select>
             <button type='submit'>add payment</button>
           </form>
-          <section>
-            {contributors && !!Object.keys(contributors).length &&
-              <section>
-                <table>
-                  <tbody>
-                    <tr>
-                      <th>#</th>
-                      <th>Full name</th>
-                      <th>Amount paid</th>
-                      <th>Payment method</th>
-                      <th>Remove payment</th>
-                    </tr>
-                    {Object.keys(contributors).map((contributionKey, index) =>
-                      <tr key={index}>
-                        <td>{index + 1}</td>
-                        <td>{contributors[contributionKey].fullName}</td>
-                        <td>{'£' + contributors[contributionKey].amountPaid}</td>
-                        <td>{contributors[contributionKey].paymentMethod}</td>
-                        <td ><a onClick={() => this.removeContribution(contributionKey)}>Remove</a></td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </section>
-            }
-          </section>
+          <CollectionContributors contributors={contributors} removeContribution={this.removeContribution} />
         </section>
+
         {/* Breakdown */}
         <section>
           <form>

@@ -16,7 +16,7 @@ class Deductions extends React.Component {
             {Object.keys(deductionData).map((deductionKey, index) => <tr key={index}>
               <td>{index + 1}</td>
               <td>{deductionData[deductionKey].description}</td>
-              <td>{deductionData[deductionKey].value}</td>
+              <td>£{(deductionData[deductionKey].value / 100).toFixed(2)}</td>
               <td onClick={() => removeDeduction(deductionKey)}>Remove</td>
             </tr>)}
           </tbody>}

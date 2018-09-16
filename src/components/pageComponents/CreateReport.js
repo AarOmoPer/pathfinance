@@ -1,7 +1,7 @@
 import React from 'react';
 import Moment from 'moment';
 import {db} from '../../firebase'
-import { Collection, Deduction } from '../subComponents'
+import { Collection, Deduction, Total } from '../subComponents'
 
 class CreateReport extends React.Component {
   state = {
@@ -30,7 +30,7 @@ class CreateReport extends React.Component {
 
         <section>
           <h3>Collections</h3>
-          <label >Add new a collection:</label>
+          <label>Add new a collection:</label>
           <form onSubmit={this.addCollection}>
             <input type='text' placeholder='Collection title' value={newCollection.title} onChange={this.handleNewCollectionPropChange} />
             <button type='submit'>Add collection</button>
@@ -42,10 +42,10 @@ class CreateReport extends React.Component {
 
         <section>
           <h3>Deductions</h3>
-          <label >Add new a deduction:</label>
+          <label>Add new a deduction:</label>
           <form onSubmit={this.addDeduction}>
             <input value={newDeduction.description} onChange={event => this.handleNewDeductionPropChange('description', event)} placeholder='description' />
-            <input type='number' value={newDeduction.value || ''} onChange={event => this.handleNewDeductionPropChange('value', event)} placeholder='amount paid' />
+            <input type='number' value={newDeduction.value / 100|| ''} onChange={event => this.handleNewDeductionPropChange('value', event)} placeholder='amount paid' />
             <button type='submit'>Add deduction</button>
           </form>
           <section>
@@ -55,7 +55,8 @@ class CreateReport extends React.Component {
 
         <section>
           <h3>Total</h3>
-          <label></label>
+          <label>See breakdown total</label>
+          <Total collections={collections} deductions={deductions} />
         </section>
         <hr />
       </section>
@@ -69,12 +70,10 @@ class CreateReport extends React.Component {
   }
   handleNewDeductionPropChange = (prop, event) => {
     const { newDeduction } = this.state;
-    newDeduction[prop] = prop === 'value' ? Number(event.target.value) : event.target.value;
+    newDeduction[prop] = prop === 'value' ? Number(event.target.value) * 100 : event.target.value;
     this.setState({ newDeduction })
   }
 
-
-  // Report methods
   addCollection = event => {
     event.preventDefault()
     const { newCollection, reportDate } = this.state;
