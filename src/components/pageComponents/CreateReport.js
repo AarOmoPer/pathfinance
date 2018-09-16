@@ -26,7 +26,7 @@ class CreateReport extends React.Component {
     const { newCollection, newDeduction, reportDate, collections, deductions } = this.state
     return (
       <section>
-        <h2>{Moment(reportDate).format('dddd, MMMM Do YYYY HH:ss')}</h2>
+        <h2>{Moment(reportDate).format('dddd, MMMM Do YYYY')}</h2>
 
         <section>
           <h3>Collections</h3>
@@ -94,22 +94,6 @@ class CreateReport extends React.Component {
     const {reportDate} = this.state
     db.removeDeduction(reportDate ,deductionKey)
   }
-
-
-  // calculateDeductionTotal = deductions => deductions.reduce((acc, deduction) => acc += deduction.value, 0)
-  // calculateReportTotal = collections => {
-  //   let cardTotal = 0;
-  //   let chequeTotal = 0;
-  //   let cashTotal = 0
-  //   for (const collection in collections){
-  //     cardTotal += collections[collection].breakdown.card.value
-  //     chequeTotal += collections[collection].breakdown.cheque.value
-  //     for (const denomination in collections[collection].breakdown.cash){
-  //       cashTotal += Number(denomination) * collections[collection].breakdown.cash[denomination]
-  //     }
-  //   }
-  //   return {cashTotal, chequeTotal, cardTotal, reportTotal: cashTotal + chequeTotal + cardTotal}
-  // }
 }
 
 export default CreateReport;

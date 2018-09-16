@@ -2,7 +2,7 @@ import React from 'react';
 
 class CashBreakdown extends React.Component {
   render() {
-    const { collectionTitle, cashData, updateCash } = this.props
+    const { cashData, updateCash } = this.props
     return (
       <section>
         <table>
@@ -22,7 +22,7 @@ class CashBreakdown extends React.Component {
                     type='number'
                     value={cashData[denomination] || ''}
                     placeholder='0'
-                    onChange={event => updateCash(collectionTitle, denomination, event)} />
+                    onChange={event => updateCash(denomination, event)} />
                 </td>
                 <td style={{'minWidth': '120px'}}>£{(Number(denomination) * cashData[denomination] / 100).toFixed(2)}</td>
               </tr>

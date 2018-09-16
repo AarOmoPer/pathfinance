@@ -12,8 +12,8 @@ export const removeDeduction = (reportDate, deductionKey) => db.ref(`reports/${r
 export const addContribution = (reportDate, collectionTitle, contributionData) => db.ref(`reports/${reportDate}/collections/${collectionTitle.toLowerCase()}/contributors`).push({...contributionData})
 export const removeContribution = (reportDate, collectionTitle, contributionKey) => db.ref(`reports/${reportDate}/collections/${collectionTitle.toLowerCase()}/contributors/${contributionKey}`).remove()
 
-
-
+export const updateCardCheque = (reportDate, collectionTitle, paymentMethod, prop, value) => db.ref(`reports/${reportDate}/collections/${collectionTitle.toLowerCase()}/breakdown/${paymentMethod}/${prop}`).set(value)
+export const updateCash = (reportDate, collectionTitle, denomination, value) => db.ref(`reports/${reportDate}/collections/${collectionTitle.toLowerCase()}/breakdown/cash/${denomination}`).set(value)
 
 
 

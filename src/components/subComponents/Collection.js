@@ -14,8 +14,6 @@ class Collection extends React.Component {
     const { newPayment } = this.state;
     const { collectionTitle, contributors, breakdown } = this.props
     const { cheque, cash, card } = breakdown
-    const { updateCardCheque, updateCash } = this.props
-    // const collectionTotal = this.calculateCollectionTotal(breakdown)
     return (
       <section>
         <hr />
@@ -25,7 +23,7 @@ class Collection extends React.Component {
           <label>Add a new contributor:</label>
           <form onSubmit={this.handleNewContributionSubmit}>
             <input value={newPayment.fullName} onChange={event => this.handleNewContributionPropChange('fullName', event)} placeholder='full name' />
-            <input type='number' value={newPayment.amountPaid || ''} onChange={event => this.handleNewContributionPropChange('amountPaid', event)} placeholder='amount paid' />
+            <input type='number' value={newPayment.amountPaid / 100 || ''} onChange={event => this.handleNewContributionPropChange('amountPaid', event)} placeholder='amount paid' />
             <select value={newPayment.paymentMethod} onChange={event => this.handleNewContributionPropChange('paymentMethod', event)}>
               <option>cheque</option>
               <option>cash</option>
@@ -64,19 +62,19 @@ class Collection extends React.Component {
         <section>
           <form>
             <h4>Cheque</h4>
-            <input type='number' placeholder='quantity' value={cheque.quantity || ""} onChange={event => updateCardCheque(collectionTitle, 'cheque', 'quantity', event)} />
-            <input type='number' placeholder='value' value={cheque.value / 100 || ""} onChange={event => updateCardCheque(collectionTitle, 'cheque', 'value', event)} />
+            <input type='number' placeholder='quantity' value={cheque.quantity || ""} onChange={event => this.updateCardCheque('cheque', 'quantity', event)} />
+            <input type='number' placeholder='value' value={cheque.value / 100 || ""} onChange={event => this.updateCardCheque('cheque', 'value', event)} />
           </form>
 
           <section>
             <h4>Cash</h4>
-            <CashBreakdown collectionTitle={collectionTitle} cashData={cash} updateCash={updateCash} />
+            <CashBreakdown cashData={cash} updateCash={this.updateCash} />
           </section>
 
           <form>
             <h4>Card</h4>
-            <input type='number' placeholder='quantity' value={card.quantity || ""} onChange={event => updateCardCheque(collectionTitle, 'card', 'quantity', event)} />
-            <input type='number' placeholder='value' value={card.value / 100 || ""} onChange={event => updateCardCheque(collectionTitle, 'card', 'value', event)} />
+            <input type='number' placeholder='quantity' value={card.quantity || ""} onChange={event => this.updateCardCheque('card', 'quantity', event)} />
+            <input type='number' placeholder='value' value={card.value / 100 || ""} onChange={event => this.updateCardCheque('card', 'value', event)} />
           </form>
         </section>
         <hr />
@@ -86,7 +84,7 @@ class Collection extends React.Component {
 
   handleNewContributionPropChange = (prop, event) => {
     const { newPayment } = this.state;
-    newPayment[prop] = prop === 'amountPaid' ? Number(event.target.value) : event.target.value;
+    newPayment[prop] = prop === 'amountPaid' ? Number(event.target.value) * 100 : event.target.value;
     this.setState(newPayment)
   }
 
@@ -105,27 +103,16 @@ class Collection extends React.Component {
     const {reportDate, collectionTitle} = this.props;
     db.removeContribution(reportDate, collectionTitle, contributionKey)
   }
-  updateCardCheque = (collectionTitle, paymentMethod, prop, event) => {
-    const { collections } = this.state;
-    collections[collectionTitle.toLowerCase()]['breakdown'][paymentMethod][prop] = prop==='value' ? Number(event.target.value) * 100 : Number(event.target.value);
-    this.setState({ collections })
+  updateCardCheque = (paymentMethod, prop, event) => {
+    const {reportDate, collectionTitle } = this.props;
+    const value = prop === 'value' ? Number(event.target.value) * 100 : Number(event.target.value);
+    db.updateCardCheque(reportDate, collectionTitle, paymentMethod, prop, value)
   }
-  updateCash = (collectionTitle, denomination, event) => {
-    const { collections } = this.state;
-    collections[collectionTitle.toLowerCase()]['breakdown']['cash'][denomination] = Number(event.target.value);
-    this.setState({ collections });
+  updateCash = (denomination, event) => {
+    const { reportDate, collectionTitle } = this.props;
+    const value = Number(event.target.value);
+    db.updateCash(reportDate, collectionTitle, denomination, value)
   }
-
-
-  // calculateCollectionTotal = breakdown => {
-  //   const cardTotal = breakdown.card.value;
-  //   const chequeTotal = breakdown.cheque.value;
-  //   let cashTotal = 0
-  //   for (const denomination in breakdown.cash){
-  //     cashTotal += Number(denomination) * breakdown.cash[denomination]
-  //   }
-  //   return {cashTotal, chequeTotal, cardTotal, collectionTotal: cashTotal + chequeTotal + cardTotal}
-  // }
 }
 
 export default Collection;
