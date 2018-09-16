@@ -1,6 +1,8 @@
 import React from 'react';
 import Moment from 'moment';
 
+import {db} from '../../firebase'
+
 class Home extends React.Component {
   state = {
     isANewReport: true,
@@ -34,6 +36,7 @@ class Home extends React.Component {
         if yes => ask user to open the old report instead?
         if no => start a new report
     */
+   isANewReport && db.createNewReport(reportDate)
     console.log(isANewReport, reportDate)
   }
   setReportDate = event => this.setState({reportDate: event.target.value})

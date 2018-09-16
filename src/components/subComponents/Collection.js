@@ -1,6 +1,6 @@
 import React from 'react';
-
-import { CashBreakdown } from '../staticComponents'
+import {db} from '../../firebase'
+import { CashBreakdown, CollectionContributors } from '../staticComponents'
 
 class Collection extends React.Component {
   state = {
@@ -13,18 +13,18 @@ class Collection extends React.Component {
   render() {
     const { newPayment } = this.state;
     const { collectionTitle, contributors, breakdown } = this.props
-    const { removeContribution, updateCardCheque, updateCash } = this.props
     const { cheque, cash, card } = breakdown
     return (
       <section>
         <hr />
         <h3>{collectionTitle}</h3>
+
         {/* Contributors */}
         <section>
           <label>Add a new contributor:</label>
           <form onSubmit={this.handleNewContributionSubmit}>
             <input value={newPayment.fullName} onChange={event => this.handleNewContributionPropChange('fullName', event)} placeholder='full name' />
-            <input type='number' value={newPayment.amountPaid || ''} onChange={event => this.handleNewContributionPropChange('amountPaid', event)} placeholder='amount paid' />
+            <input type='number' value={newPayment.amountPaid / 100 || ''} onChange={event => this.handleNewContributionPropChange('amountPaid', event)} placeholder='amount paid' />
             <select value={newPayment.paymentMethod} onChange={event => this.handleNewContributionPropChange('paymentMethod', event)}>
               <option>cheque</option>
               <option>cash</option>
@@ -32,50 +32,26 @@ class Collection extends React.Component {
             </select>
             <button type='submit'>add payment</button>
           </form>
-          <section>
-            {!!contributors.length &&
-              <section>
-                <table>
-                  <tbody>
-                    <tr>
-                      <th>#</th>
-                      <th>Full name</th>
-                      <th>Amount paid</th>
-                      <th>Payment method</th>
-                      <th>Remove payment</th>
-                    </tr>
-                    {contributors.map((contribution, index) =>
-                      <tr key={index}>
-                        <td>{index + 1}</td>
-                        <td>{contribution.fullName}</td>
-                        <td>{'£' + contribution.amountPaid}</td>
-                        <td>{contribution.paymentMethod}</td>
-                        <td ><a onClick={() => removeContribution(collectionTitle, index)}>Remove</a></td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </section>
-            }
-          </section>
+          <CollectionContributors contributors={contributors} removeContribution={this.removeContribution} />
         </section>
+
         {/* Breakdown */}
         <section>
           <form>
             <h4>Cheque</h4>
-            <input type='number' placeholder='quantity' value={cheque.quantity || ""} onChange={event => updateCardCheque(collectionTitle, 'cheque', 'quantity', event)} />
-            <input type='number' placeholder='value' value={cheque.value || ""} onChange={event => updateCardCheque(collectionTitle, 'cheque', 'value', event)} />
+            <input type='number' placeholder='quantity' value={cheque.quantity || ""} onChange={event => this.updateCardCheque('cheque', 'quantity', event)} />
+            <input type='number' placeholder='value' value={cheque.value / 100 || ""} onChange={event => this.updateCardCheque('cheque', 'value', event)} />
           </form>
 
           <section>
             <h4>Cash</h4>
-            <CashBreakdown collectionTitle={collectionTitle} cashData={cash} updateCash={updateCash} />
+            <CashBreakdown cashData={cash} updateCash={this.updateCash} />
           </section>
 
           <form>
             <h4>Card</h4>
-            <input type='number' placeholder='quantity' value={card.quantity || ""} onChange={event => updateCardCheque(collectionTitle, 'card', 'quantity', event)} />
-            <input type='number' placeholder='value' value={card.value || ""} onChange={event => updateCardCheque(collectionTitle, 'card', 'value', event)} />
+            <input type='number' placeholder='quantity' value={card.quantity || ""} onChange={event => this.updateCardCheque('card', 'quantity', event)} />
+            <input type='number' placeholder='value' value={card.value / 100 || ""} onChange={event => this.updateCardCheque('card', 'value', event)} />
           </form>
         </section>
         <hr />
@@ -85,17 +61,35 @@ class Collection extends React.Component {
 
   handleNewContributionPropChange = (prop, event) => {
     const { newPayment } = this.state;
-    newPayment[prop] = event.target.value;
+    newPayment[prop] = prop === 'amountPaid' ? Number(event.target.value) * 100 : event.target.value;
     this.setState(newPayment)
   }
 
   handleNewContributionSubmit = event => {
     event.preventDefault()
     const { newPayment } = this.state;
-    const { collectionTitle, addContribution } = this.props
-    if (newPayment.fullName && newPayment.amountPaid) addContribution(collectionTitle, Object.assign({}, newPayment))
+    if (newPayment.fullName && newPayment.amountPaid) this.addContribution(Object.assign({}, newPayment))
   }
 
+
+  addContribution = contributionData => {
+    const {reportDate, collectionTitle} = this.props;
+    db.addContribution(reportDate, collectionTitle, contributionData)
+  }
+  removeContribution = contributionKey => {
+    const {reportDate, collectionTitle} = this.props;
+    db.removeContribution(reportDate, collectionTitle, contributionKey)
+  }
+  updateCardCheque = (paymentMethod, prop, event) => {
+    const {reportDate, collectionTitle } = this.props;
+    const value = prop === 'value' ? Number(event.target.value) * 100 : Number(event.target.value);
+    db.updateCardCheque(reportDate, collectionTitle, paymentMethod, prop, value)
+  }
+  updateCash = (denomination, event) => {
+    const { reportDate, collectionTitle } = this.props;
+    const value = Number(event.target.value);
+    db.updateCash(reportDate, collectionTitle, denomination, value)
+  }
 }
 
 export default Collection;
