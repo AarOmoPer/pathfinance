@@ -12,21 +12,18 @@ class CreateReport extends React.Component {
       description: 'kicks',
       value: 250
     },
-    reportDate: Date.now(),
+    reportDate: Moment(Date.now()).format('YYYY-MM-DD'),
     collections: {},
     deductions: [],
   }
 
   componentDidMount(){
     const {reportDate} = this.state;
-    db.getReportData(Moment(reportDate).format('YYYY-MM-DD'), reportData => this.setState({...reportData}))
+    db.getReportData(reportDate, reportData => this.setState({...reportData}))
   }
 
   render() {
     const { newCollection, newDeduction, reportDate, collections, deductions } = this.state
-    const collectionMethods = { addContribution: this.addContribution, removeContribution: this.removeContribution, updateCardCheque: this.updateCardCheque, updateCash: this.updateCash }
-    const reportTotal = this.calculateReportTotal(collections, deductions)
-    // const deductionTotal = this.calculateDeductionTotal(deductions)
     return (
       <section>
         <h2>{Moment(reportDate).format('dddd, MMMM Do YYYY HH:ss')}</h2>
@@ -39,7 +36,7 @@ class CreateReport extends React.Component {
             <button type='submit'>Add collection</button>
           </form>
           <section>
-            {Object.values(collections).map((collection, index) => <Collection key={index} {...collection} {...collectionMethods} />)}
+            {Object.values(collections).map((collection, index) => <Collection key={index} {...collection} reportDate={reportDate} />)}
           </section>
         </section>
 
@@ -76,69 +73,43 @@ class CreateReport extends React.Component {
     this.setState({ newDeduction })
   }
 
+
   // Report methods
   addCollection = event => {
     event.preventDefault()
     const { newCollection, reportDate } = this.state;
-    db.addCollection(Moment(reportDate).format('YYYY-MM-DD'), newCollection.title)
+    db.addCollection(reportDate, newCollection.title)
   }
-
-  // removeCollection = collectionTitle => {
-  //   const { collections } = this.state
-  //   delete collections[collectionTitle.toLowerCase()]
-  //   this.setState({ collections })
-  // }
+  removeCollection = collectionTitle => {
+    const { reportDate } = this.state
+    db.removeCollection(reportDate, collectionTitle)
+  }
 
   addDeduction = event => {
     event.preventDefault()
     const { newDeduction, reportDate } = this.state;
-    db.addDeduction(Moment(reportDate).format('YYYY-MM-DD'), newDeduction)
+    db.addDeduction(reportDate, newDeduction)
   }
-
-  removeDeduction = deductionIndex => {
-    const { deductions } = this.state;
-    const filteredDeductions = deductions.filter((deduction, index) => index !== deductionIndex)
-    this.setState({ deductions: [...filteredDeductions] })
+  removeDeduction = deductionKey => {
+    const {reportDate} = this.state
+    db.removeDeduction(reportDate ,deductionKey)
   }
 
 
-  // Collection methods
-  addContribution = (collectionTitle, contributionData) => {
-    const { collections } = this.state;
-    collections[collectionTitle.toLowerCase()]['contributors'].push(contributionData)
-    this.setState({ collections })
-  }
-  removeContribution = (collectionTitle, contributionIndex) => {
-    const { collections } = this.state;
-    collections[collectionTitle.toLowerCase()]['contributors'] = collections[collectionTitle.toLowerCase()]['contributors'].filter((contribution, index) => index !== contributionIndex)
-    this.setState({ collections })
-  }
-  updateCardCheque = (collectionTitle, paymentMethod, prop, event) => {
-    const { collections } = this.state;
-    collections[collectionTitle.toLowerCase()]['breakdown'][paymentMethod][prop] = prop==='value' ? Number(event.target.value) * 100 : Number(event.target.value);
-    this.setState({ collections })
-  }
-  updateCash = (collectionTitle, denomination, event) => {
-    const { collections } = this.state;
-    collections[collectionTitle.toLowerCase()]['breakdown']['cash'][denomination] = Number(event.target.value);
-    this.setState({ collections });
-  }
-
-  calculateDeductionTotal = deductions => deductions.reduce((acc, deduction) => acc += deduction.value, 0)
-
-  calculateReportTotal = collections => {
-    let cardTotal = 0;
-    let chequeTotal = 0;
-    let cashTotal = 0
-    for (const collection in collections){
-      cardTotal += collections[collection].breakdown.card.value
-      chequeTotal += collections[collection].breakdown.cheque.value
-      for (const denomination in collections[collection].breakdown.cash){
-        cashTotal += Number(denomination) * collections[collection].breakdown.cash[denomination]
-      }
-    }
-    return {cashTotal, chequeTotal, cardTotal, reportTotal: cashTotal + chequeTotal + cardTotal}
-  }
+  // calculateDeductionTotal = deductions => deductions.reduce((acc, deduction) => acc += deduction.value, 0)
+  // calculateReportTotal = collections => {
+  //   let cardTotal = 0;
+  //   let chequeTotal = 0;
+  //   let cashTotal = 0
+  //   for (const collection in collections){
+  //     cardTotal += collections[collection].breakdown.card.value
+  //     chequeTotal += collections[collection].breakdown.cheque.value
+  //     for (const denomination in collections[collection].breakdown.cash){
+  //       cashTotal += Number(denomination) * collections[collection].breakdown.cash[denomination]
+  //     }
+  //   }
+  //   return {cashTotal, chequeTotal, cardTotal, reportTotal: cashTotal + chequeTotal + cardTotal}
+  // }
 }
 
 export default CreateReport;
