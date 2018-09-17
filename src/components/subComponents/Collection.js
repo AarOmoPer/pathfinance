@@ -6,8 +6,8 @@ class Collection extends React.Component {
   state = {
     newPayment: {
       fullName: 'Jane',
-      amountPaid: 20,
-      paymentMethod: 'cheque'
+      amountPaid: 200,
+      paymentMethod: 'card'
     }
   }
   render() {
