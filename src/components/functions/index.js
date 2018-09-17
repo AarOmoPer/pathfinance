@@ -1,3 +1,32 @@
+export const getNewCollectionObject = collectionTitle => Object.assign({}, {
+  collectionTitle,
+  contributors: [],
+  breakdown: {
+    cheque: {
+      quantity: 0,
+      value: 0
+    },
+    cash: {
+      5000: 0,
+      2000: 0,
+      1000: 0,
+      500: 0,
+      200: 0,
+      100: 0,
+      50: 0,
+      20: 0,
+      10: 0,
+      5: 0,
+      2: 0,
+      1: 0
+    },
+    card: {
+      quantity: 0,
+      value: 0
+    }
+  }
+})
+
 export const getCollectionTotal = collections => {
   const collectionTotal = {
     cheque: {quantity: 0, value: 0},
@@ -41,3 +70,9 @@ export const getDeductionTotal = deductions => {
   }
   return deductionTotal
 }
+
+export const getReportState = (reportData, reportDate) => ({
+  reportDate: reportData.reportDate || reportDate,
+  collections: reportData.collections || {},
+  deductions: reportData.deductions || {},
+})

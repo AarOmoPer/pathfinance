@@ -9,7 +9,7 @@ class Home extends React.Component {
     reportDate: Moment().format('YYYY-MM-DD'),
   }
   render() {
-    const { isANewReport, reportDate } = this.state
+    const { reportDate } = this.state
     return (
       <form onSubmit={this.handleSubmit}>
         <h2>Pathfinance</h2>
