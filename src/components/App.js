@@ -1,15 +1,15 @@
 import React from 'react';
-
-import {Report} from './pageComponents'
+import {Authentication} from './higherOrderComponents'
+import {Home, Report, SignIn} from './pageComponents'
 
 class App extends React.Component{
   render(){
     return(
-      <section>
-        {/* <h1>Hello World!</h1> */}
+      <Authentication >
         {/* <Home /> */}
-        <Report />
-      </section>
+        {/* <Report /> */}
+        <SignIn />
+      </Authentication>
     )
   }
 }

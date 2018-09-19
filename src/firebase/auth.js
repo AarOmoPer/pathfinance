@@ -1,7 +1,8 @@
 import {auth} from './firebase'
 
-auth.onAuthStateChanged(user => {})
+export const square = num => num * num
 
-const signIn = (email, pass) => auth.signInWithEmailAndPassword(email, pass)
-const signOut = () => auth.signOut()
+export const signIn = (email, pass) => console.log
+// export const signIn = (email, pass) => auth.signInWithEmailAndPassword(email, pass)
+export const signOut = () => auth.signOut()
 // const addUser = (email, pass) => auth.createUserWithEmailAndPassword(email, pass)
