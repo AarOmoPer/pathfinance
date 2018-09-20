@@ -2,6 +2,7 @@ import React from 'react';
 import Moment from 'moment';
 import { db } from '../../firebase'
 import { Collection, Deduction, Total } from '../subComponents'
+import { Authorization } from '../higherOrderComponents'
 import { getReportState } from '../functions'
 
 class Report extends React.Component {
@@ -30,47 +31,49 @@ class Report extends React.Component {
   render() {
     const { newCollection, newDeduction, reportDate, collections, deductions } = this.state
     return (
-      <section>
-        <h2>{Moment(reportDate).format('dddd, MMMM Do YYYY')}</h2>
-
+      <Authorization>
         <section>
-          <h3>Collections</h3>
-          <section>
-            <label>Add a new collection:</label>
-            <form onSubmit={this.addCollection}>
-              <input type='text' placeholder='Collection title' value={newCollection.title} onChange={this.handleNewCollectionPropChange} />
-              <button type='submit'>Add collection</button>
-            </form>
-          </section>
-          <section>
-            {Object.values(collections).map((collection, index) => <Collection key={index} {...collection} reportDate={reportDate} removeCollection={this.removeCollection} />)}
-          </section>
-        </section>
+          <h2>{Moment(reportDate).format('dddd, MMMM Do YYYY')}</h2>
 
-        <section>
-          <h3>Deductions</h3>
           <section>
-            <label>Add a new deduction:</label>
-            <form onSubmit={this.addDeduction}>
-              <input value={newDeduction.description} onChange={event => this.handleNewDeductionPropChange('description', event)} placeholder='description' />
-              <input type='number' value={newDeduction.value / 100 || ''} onChange={event => this.handleNewDeductionPropChange('value', event)} placeholder='amount paid' />
-              <button type='submit'>Add deduction</button>
-            </form>
+            <h3>Collections</h3>
+            <section>
+              <label>Add a new collection:</label>
+              <form onSubmit={this.addCollection}>
+                <input type='text' placeholder='Collection title' value={newCollection.title} onChange={this.handleNewCollectionPropChange} />
+                <button type='submit'>Add collection</button>
+              </form>
+            </section>
+            <section>
+              {Object.values(collections).map((collection, index) => <Collection key={index} {...collection} reportDate={reportDate} removeCollection={this.removeCollection} />)}
+            </section>
           </section>
-          <section>
-            <Deduction deductionData={deductions} removeDeduction={this.removeDeduction} />
-          </section>
-        </section>
 
-        <section>
-          <h3>Total</h3>
-          <label>See breakdown total</label>
           <section>
-            <Total collections={collections} deductions={deductions} />
+            <h3>Deductions</h3>
+            <section>
+              <label>Add a new deduction:</label>
+              <form onSubmit={this.addDeduction}>
+                <input value={newDeduction.description} onChange={event => this.handleNewDeductionPropChange('description', event)} placeholder='description' />
+                <input type='number' value={newDeduction.value / 100 || ''} onChange={event => this.handleNewDeductionPropChange('value', event)} placeholder='amount paid' />
+                <button type='submit'>Add deduction</button>
+              </form>
+            </section>
+            <section>
+              <Deduction deductionData={deductions} removeDeduction={this.removeDeduction} />
+            </section>
           </section>
+
+          <section>
+            <h3>Total</h3>
+            <label>See breakdown total</label>
+            <section>
+              <Total collections={collections} deductions={deductions} />
+            </section>
+          </section>
+          <hr />
         </section>
-        <hr />
-      </section>
+      </Authorization>
     )
   }
 

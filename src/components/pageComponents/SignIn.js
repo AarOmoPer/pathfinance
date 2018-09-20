@@ -3,8 +3,8 @@ import {auth} from '../../firebase'
 
 class SignIn extends React.Component{
   state = {
-    email: '',
-    pass: '',
+    email: 'test@test.me',
+    pass: 'testuser',
   }
   render(){
     const {email, pass} = this.state
@@ -12,7 +12,7 @@ class SignIn extends React.Component{
       <section>
         <input value={email} onChange={event => this.handleCredChange('email', event)} placeholder='email'/>
         <input type='password' value={pass} onChange={event => this.handleCredChange('pass', event)} placeholder='password'/>
-        <button onClick={this.handleCredSubmit}>Sign in</button>
+        <button onClick={this.handleCredSubmit}>Sign in to me</button>
       </section>
     )
   }
@@ -25,11 +25,8 @@ class SignIn extends React.Component{
 
   handleCredSubmit = () => {
     const {email, pass} = this.state;
-    console.log('mode', email, pass)
-    console.log(auth)
-    // const promise = auth.signIn(email, pass)
-    // promise.then(console.log)
-    // promise.catch(console.log)
+    const signInPromise = auth.signIn(email, pass)
+    signInPromise.catch(console.log)
   }
 }
 

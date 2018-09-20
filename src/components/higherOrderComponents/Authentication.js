@@ -1,6 +1,7 @@
 import React from 'react';
 import {auth} from '../../firebase/firebase'
-import {AuthContext} from '../Context' 
+import {AuthContext} from '../Context'
+import {withRouter} from 'react-router-dom'
 
 class Authentication extends React.Component {
   state = {
@@ -8,7 +9,18 @@ class Authentication extends React.Component {
   }
 
   componentDidMount(){
-    auth.onAuthStateChanged(user => console.log(user))
+    const {history} = this.props;
+    auth.onAuthStateChanged(user => {
+      if(!!user){
+        this.setState({user});
+        // console.log(user)
+        history.push('/home')
+        console.log(`${user.email} has signed in`)
+      }else{
+        this.setState({user: null});
+        console.log('user has signed out')
+      }
+    })
   }
 
   render() {
@@ -20,4 +32,4 @@ class Authentication extends React.Component {
   }
 }
 
-export default Authentication
+export default withRouter(Authentication)
