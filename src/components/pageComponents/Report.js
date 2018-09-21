@@ -4,6 +4,7 @@ import { db } from '../../firebase'
 import { Collection, Deduction, Total } from '../subComponents'
 import { Authorization } from '../higherOrderComponents'
 import { getReportState } from '../functions'
+import { withRouter, Link } from 'react-router-dom'
 
 class Report extends React.Component {
   state = {
@@ -22,10 +23,16 @@ class Report extends React.Component {
     deductions: [],
   }
 
-  componentDidMount(props) {
-    // const {reportDate} = props
-    const reportDate = Moment(Date.now()).format('YYYY-MM-DD');
-    db.getReportData(reportDate, reportData => this.setState({ ...getReportState(reportData, reportDate) }))
+  componentDidMount() {
+    const { history } = this.props
+    const givenDate = history.location.pathname.split('/')[2]
+    const formatedDate = Moment(givenDate).format("YYYY-MM-DD")
+    console.log(givenDate, formatedDate)
+    if (givenDate && formatedDate !== 'Invalid date') {
+      db.getReportData(formatedDate, reportData => this.setState({ ...getReportState(reportData, formatedDate) }))
+    } else {
+      history.push('/home')
+    }
   }
 
   render() {
@@ -33,16 +40,17 @@ class Report extends React.Component {
     return (
       <Authorization>
         <section>
+          <Link to='/home'>Return home</Link>
           <h2>{Moment(reportDate).format('dddd, MMMM Do YYYY')}</h2>
 
           <section>
             <h3>Collections</h3>
             <section>
               <label>Add a new collection:</label>
-              <form onSubmit={this.addCollection}>
+              <section>
                 <input type='text' placeholder='Collection title' value={newCollection.title} onChange={this.handleNewCollectionPropChange} />
-                <button type='submit'>Add collection</button>
-              </form>
+                <button type='button' onClick={this.addCollection}>Add collection</button>
+              </section>
             </section>
             <section>
               {Object.values(collections).map((collection, index) => <Collection key={index} {...collection} reportDate={reportDate} removeCollection={this.removeCollection} />)}
@@ -53,11 +61,11 @@ class Report extends React.Component {
             <h3>Deductions</h3>
             <section>
               <label>Add a new deduction:</label>
-              <form onSubmit={this.addDeduction}>
+              <section>
                 <input value={newDeduction.description} onChange={event => this.handleNewDeductionPropChange('description', event)} placeholder='description' />
                 <input type='number' value={newDeduction.value / 100 || ''} onChange={event => this.handleNewDeductionPropChange('value', event)} placeholder='amount paid' />
-                <button type='submit'>Add deduction</button>
-              </form>
+                <button type='button' onClick={this.addDeduction}>Add deduction</button>
+              </section>
             </section>
             <section>
               <Deduction deductionData={deductions} removeDeduction={this.removeDeduction} />
@@ -73,7 +81,7 @@ class Report extends React.Component {
           </section>
           <hr />
         </section>
-      </Authorization>
+       </Authorization>
     )
   }
 
@@ -109,4 +117,4 @@ class Report extends React.Component {
   }
 }
 
-export default Report;
+export default withRouter(Report);
