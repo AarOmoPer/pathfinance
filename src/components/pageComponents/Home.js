@@ -3,6 +3,7 @@ import Moment from 'moment';
 import { db, auth } from '../../firebase'
 import { AuthContext } from '../Context'
 import { Authorization } from '../higherOrderComponents'
+import { withRouter } from 'react-router-dom'
 
 
 class Home extends React.Component {
@@ -43,15 +44,12 @@ class Home extends React.Component {
   handleSubmit = event => {
     event.preventDefault()
     const { isANewReport, reportDate } = this.state;
-    /* if it's a new report check if a report for said date already exists 
-        if yes => ask user to open the old report instead?
-        if no => start a new report
-    */
-    isANewReport && db.createNewReport(reportDate)
+    const { history } = this.props
+    history.push(`/report/${reportDate}`)
     console.log(isANewReport, reportDate)
   }
   handleReportDate = event => this.setState({ reportDate: event.target.value })
   setOperationType = isANewReport => this.setState({ isANewReport })
 }
 
-export default Home;
+export default withRouter(Home);
