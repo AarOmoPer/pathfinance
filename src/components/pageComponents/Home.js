@@ -1,31 +1,31 @@
 import React from 'react';
 import Moment from 'moment';
-import { db, auth } from '../../firebase'
+import { auth } from '../../firebase'
 import { AuthContext } from '../Context'
 import { Authorization } from '../higherOrderComponents'
+import { withRouter } from 'react-router-dom'
 
 
 class Home extends React.Component {
   state = {
-    isANewReport: true,
+    editReport: false,
     reportDate: Moment().format('YYYY-MM-DD'),
   }
   render() {
-    const { reportDate, isANewReport } = this.state
-    // console.log(isANewReport)
+    const { reportDate, editReport } = this.state
+    console.log(editReport)
     return (
       <Authorization>
         <AuthContext.Consumer>
           {context =>
-            <form onSubmit={this.handleSubmit}>
+            <section >
               <button type='button' onClick={auth.signOut}>Sign out</button>
               <h2>Pathfinance</h2>
               <p>Welcome {context.user && context.user.email}</p>
               <section>
                 <label>Please select the operation you would like to perform.</label>
-                <button type='button' onClick={() => this.setOperationType(true)}>Contribute to a new report</button>
-                <button type='button' onClick={() => this.setOperationType(false)}>Open a previous report</button>
-                {/* <button type='button' onClick={() => this.setOperationType(false)}>Edit a previous report</button> */}
+                <button type='button' onClick={() => this.setOperationType(false)}>Contribute to a new report</button>
+                <button type='button' onClick={() => this.setOperationType(true)}>Open a previous report</button>
               </section>
 
               <section>
@@ -33,8 +33,8 @@ class Home extends React.Component {
                 <input type='date' value={reportDate} onChange={this.handleReportDate} />
               </section>
 
-              <button type='submit'>Proceed</button>
-            </form>
+              <button type='button' onClick={this.handleSubmit}>Proceed</button>
+            </section>
           }
         </AuthContext.Consumer>
       </Authorization>
@@ -42,16 +42,13 @@ class Home extends React.Component {
   }
   handleSubmit = event => {
     event.preventDefault()
-    const { isANewReport, reportDate } = this.state;
-    /* if it's a new report check if a report for said date already exists 
-        if yes => ask user to open the old report instead?
-        if no => start a new report
-    */
-    isANewReport && db.createNewReport(reportDate)
-    console.log(isANewReport, reportDate)
+    const { editReport, reportDate } = this.state;
+    const { history } = this.props;
+    const openMode = editReport ? 'edit' : 'view';
+    history.push(`/report/${reportDate}/${openMode}`)
   }
   handleReportDate = event => this.setState({ reportDate: event.target.value })
   setOperationType = isANewReport => this.setState({ isANewReport })
 }
 
-export default Home;
+export default withRouter(Home);

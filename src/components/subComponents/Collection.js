@@ -23,7 +23,7 @@ class Collection extends React.Component {
         <section>
           <section>
             <label>Add a new contributor:</label>
-            <form onSubmit={this.handleNewContributionSubmit}>
+            <section>
               <input value={newPayment.fullName} onChange={event => this.handleNewContributionPropChange('fullName', event)} placeholder='full name' />
               <input type='number' value={newPayment.amountPaid / 100 || ''} onChange={event => this.handleNewContributionPropChange('amountPaid', event)} placeholder='amount paid' />
               <select value={newPayment.paymentMethod} onChange={event => this.handleNewContributionPropChange('paymentMethod', event)}>
@@ -31,8 +31,8 @@ class Collection extends React.Component {
                 <option>cash</option>
                 <option>card</option>
               </select>
-              <button type='submit'>add payment</button>
-            </form>
+              <button type='button' onClick={this.handleNewContributionSubmit}>add payment</button>
+            </section>
           </section>
           <section>
             <CollectionContributors contributors={contributors} removeContribution={this.removeContribution} />
@@ -41,22 +41,22 @@ class Collection extends React.Component {
 
         {/* Breakdown */}
         <section>
-          <form>
+          <section>
             <h4>Cheque</h4>
             <input type='number' placeholder='quantity' value={cheque.quantity || ""} onChange={event => this.updateCardCheque('cheque', 'quantity', event)} />
             <input type='number' placeholder='value' value={cheque.value / 100 || ""} onChange={event => this.updateCardCheque('cheque', 'value', event)} />
-          </form>
+          </section>
 
           <section>
             <h4>Cash</h4>
             <CashBreakdown cashData={cash} updateCash={this.updateCash} />
           </section>
 
-          <form>
+          <section>
             <h4>Card</h4>
             <input type='number' placeholder='quantity' value={card.quantity || ""} onChange={event => this.updateCardCheque('card', 'quantity', event)} />
             <input type='number' placeholder='value' value={card.value / 100 || ""} onChange={event => this.updateCardCheque('card', 'value', event)} />
-          </form>
+          </section>
         </section>
         <hr />
       </section>
