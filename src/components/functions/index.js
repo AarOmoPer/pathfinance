@@ -1,5 +1,3 @@
-import Moment from 'moment'
-
 export const getNewCollectionObject = collectionTitle => Object.assign({}, {
   collectionTitle,
   contributors: [],
@@ -72,9 +70,3 @@ export const getDeductionTotal = deductions => {
   }
   return deductionTotal
 }
-
-export const getReportState = (reportData, reportDate=Moment().format('yyyy-MM-DD')) => ({
-  reportDate: (reportData && reportData.reportDate) || reportDate,
-  collections: (reportData && reportData.collections) || {},
-  deductions: (reportData && reportData.deductions) || {},
-})

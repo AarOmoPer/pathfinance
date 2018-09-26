@@ -9,7 +9,7 @@ function Total(props) {
   const toBank = collectionTotal.combinedTotal - deductionTotal
   return (
     <section>
-      <p>Collection total - £{(collectionTotal.combinedTotal / 100).toFixed(2)}</p>
+      <p>Collection total: £{(collectionTotal.combinedTotal / 100).toFixed(2)}</p>
       <ul>
         <li>Cheque: {collectionTotal.cheque.quantity} cheques payments worth £{(collectionTotal.cheque.value / 100).toFixed(2)}</li>
         <li><section>
@@ -19,9 +19,9 @@ function Total(props) {
         <li>Card: {collectionTotal.card.quantity} card payments worth £{(collectionTotal.card.value / 100).toFixed(2)}</li>
       </ul>
 
-      <p>Deduction total - £{(deductionTotal / 100).toFixed(2)}</p>
+      <p>Deduction total: £{(deductionTotal / 100).toFixed(2)}</p>
 
-      <p>Amount going to bank - £{(toBank / 100).toFixed(2)}</p>
+      <p>Amount going to bank: <span className={toBank < 0 ? "has-text-danger" : "has-text-success"}>{(toBank < 0) && "-"}£{Math.abs(toBank / 100).toFixed(2)}</span></p>
     </section>
   )
 }

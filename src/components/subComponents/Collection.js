@@ -15,50 +15,97 @@ class Collection extends React.Component {
     const { collectionTitle, contributors, breakdown, removeCollection } = this.props
     const { cheque, cash, card } = breakdown
     return (
-      <section>
-        <hr />
-        <h3>{collectionTitle}</h3>
-        <p onClick={() => removeCollection(collectionTitle)}>Remove Collection</p>
+      <section className='message is-dark'>
+        <div class="message-header">
+          <p>{collectionTitle}</p>
+          <p className="delete" onClick={() => removeCollection(collectionTitle)}>Remove Collection</p>
+        </div>
         {/* Contributors */}
-        <section>
+        <section className='message-body'>
+
           <section>
-            <label>Add a new contributor:</label>
-            <section>
-              <input value={newPayment.fullName} onChange={event => this.handleNewContributionPropChange('fullName', event)} placeholder='full name' />
-              <input type='number' value={newPayment.amountPaid / 100 || ''} onChange={event => this.handleNewContributionPropChange('amountPaid', event)} placeholder='amount paid' />
-              <select value={newPayment.paymentMethod} onChange={event => this.handleNewContributionPropChange('paymentMethod', event)}>
-                <option>cheque</option>
-                <option>cash</option>
-                <option>card</option>
-              </select>
-              <button type='button' onClick={this.handleNewContributionSubmit}>add payment</button>
+            <section className="content no-print">
+              <label className="subtitle is-6">Add a new contributor:</label>
+              <section className="field">
+                <p className="control">
+                  <input className='input' value={newPayment.fullName} onChange={event => this.handleNewContributionPropChange('fullName', event)} placeholder='Full name' />
+                </p>
+              </section>
+              <section className="field">
+                <p className="control">
+                  <input className='input' type='number' value={newPayment.amountPaid / 100 || ''} onChange={event => this.handleNewContributionPropChange('amountPaid', event)} placeholder='Amount paid' />
+                </p>
+              </section>
+              <section className="field">
+                <p className="control">
+                  <section className='select'>
+                    <select value={newPayment.paymentMethod} onChange={event => this.handleNewContributionPropChange('paymentMethod', event)}>
+                      <option value='cheque'>Cheque</option>
+                      <option value='cash'>Cash</option>
+                      <option value='card'>Card</option>
+                    </select>
+                  </section>
+                </p>
+                <p className="control">
+                  <button className="button is-dark" type='button' onClick={this.handleNewContributionSubmit}>Add payment</button>
+                </p>
+              </section>
+            </section>
+            <section className="">
+              {contributors && !!Object.keys(contributors).length && <CollectionContributors contributors={contributors} removeContribution={this.removeContribution} />}
             </section>
           </section>
-          <section>
-            <CollectionContributors contributors={contributors} removeContribution={this.removeContribution} />
+          <hr />
+          {/* Breakdown */}
+          <section className="">
+            <section>
+              <label className="subtitle is-6">Cheque:</label>
+              <section className="field">
+                <p className="control">
+                  <input className="input" type='number' placeholder='Quantity' value={cheque.quantity || ""} onChange={event => this.updateCardCheque('cheque', 'quantity', event)} />
+                </p>
+              </section>
+              <section class="field has-addons">
+                <p class="control">
+                  <a class="button is-static">
+                    £
+                    </a>
+                </p>
+                <p class="control is-expanded">
+                  <input className="input" type='number' placeholder='Value' value={cheque.value / 100 || ""} onChange={event => this.updateCardCheque('cheque', 'value', event)} />
+                </p>
+              </section>
+            </section>
+
+            <hr />
+
+            <section className="">
+              <label className="subtitle is-6">Cash:</label>
+              <CashBreakdown cashData={cash} updateCash={this.updateCash} />
+            </section>
+
+            <hr />
+
+            <section>
+              <label className="subtitle is-6">Card:</label>
+              <section className="field">
+                <p className="control">
+                  <input className="input" type='number' placeholder='Quantity' value={card.quantity || ""} onChange={event => this.updateCardCheque('card', 'quantity', event)} />
+                </p>
+              </section>
+              <section class="field has-addons">
+                <p class="control">
+                  <a class="button is-static">
+                    £
+                    </a>
+                </p>
+                <p class="control is-expanded">
+                  <input className="input" type='number' placeholder='Value' value={card.value / 100 || ""} onChange={event => this.updateCardCheque('card', 'value', event)} />
+                </p>
+              </section>
+            </section>
           </section>
         </section>
-
-        {/* Breakdown */}
-        <section>
-          <section>
-            <h4>Cheque</h4>
-            <input type='number' placeholder='quantity' value={cheque.quantity || ""} onChange={event => this.updateCardCheque('cheque', 'quantity', event)} />
-            <input type='number' placeholder='value' value={cheque.value / 100 || ""} onChange={event => this.updateCardCheque('cheque', 'value', event)} />
-          </section>
-
-          <section>
-            <h4>Cash</h4>
-            <CashBreakdown cashData={cash} updateCash={this.updateCash} />
-          </section>
-
-          <section>
-            <h4>Card</h4>
-            <input type='number' placeholder='quantity' value={card.quantity || ""} onChange={event => this.updateCardCheque('card', 'quantity', event)} />
-            <input type='number' placeholder='value' value={card.value / 100 || ""} onChange={event => this.updateCardCheque('card', 'value', event)} />
-          </section>
-        </section>
-        <hr />
       </section>
     )
   }

@@ -14,7 +14,7 @@ class Authentication extends React.Component {
       if(!!user){
         this.setState({user});
         // console.log(user)
-        history.push('/home')
+        history.push('/report')
         console.log(`${user.email} has signed in`)
       }else{
         this.setState({user: null});

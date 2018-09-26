@@ -1,5 +1,7 @@
 import * as firebase from 'firebase';
-import {config} from './config'
+// import {config} from './config'
+
+const config = process.env.FB
 
 firebase.initializeApp(config)
 
