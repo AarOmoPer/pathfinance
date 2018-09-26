@@ -3,6 +3,7 @@ import {getNewCollectionObject} from '../components/functions'
 
 export const createNewReport = reportDate => db.ref(`reports/${reportDate}`).set({reportDate})
 export const getReportData = (reportDate, cb) => db.ref(`reports/${reportDate}`).on('value', snapshot => cb(snapshot.val()))
+export const stopReportData = reportDate => db.ref(`reports/${reportDate}`).off()
 
 export const addCollection =  (reportDate, collectionTitle) => db.ref(`reports/${reportDate}/collections/${collectionTitle.toLowerCase()}`).set(getNewCollectionObject(collectionTitle))
 export const removeCollection = (reportDate, collectionTitle) => db.ref(`reports/${reportDate}/collections/${collectionTitle}`).remove()

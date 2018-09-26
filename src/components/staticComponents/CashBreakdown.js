@@ -4,9 +4,9 @@ function CashBreakdown(props) {
   const { cashData, updateCash , isReadOnly = false} = props
   return(
       <section>
-        <table>
+        <table className='table is-narrow is-striped is-fullwidth is-hoverable'>
           <thead>
-            <tr>
+            <tr className='is-light'>
               <th>Units</th>
               <th>Quantity</th>
               <th>Sum</th>
@@ -19,15 +19,17 @@ function CashBreakdown(props) {
                 <td> 
                   {
                     isReadOnly 
-                     ? <input value={cashData[denomination]} readOnly/>
+                     ? <input className="input is-small disabled" value={cashData[denomination]} readOnly/>
                      :<input
+                      className="input is-small"
                        type='number'
                        value={cashData[denomination] || ''}
                        placeholder='0'
                        onChange={event => updateCash(denomination, event)} />
                   }
                 </td>
-                <td style={{'minWidth': '120px'}}>£{(Number(denomination) * cashData[denomination] / 100).toFixed(2)}</td>
+                <td>£{(Number(denomination) * cashData[denomination] / 100).toFixed(2)}</td>
+                {/* <td style={{'minWidth': '120px'}}>£{(Number(denomination) * cashData[denomination] / 100).toFixed(2)}</td> */}
               </tr>
             )}
           </tbody>

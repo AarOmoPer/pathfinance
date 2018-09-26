@@ -4,23 +4,25 @@ class Deductions extends React.Component {
   render() {
     const { deductionData, removeDeduction } = this.props
     return (
-      <section>
-        <table>
-          {!!Object.keys(deductionData).length && <tbody>
+      <section className="box scrollable-window">
+        {!!Object.keys(deductionData).length && <table className="table is-narrow is-striped is-hoverable is-fullwidth">
+          <thead>
             <tr>
               <th>#</th>
               <th>Description of deduction</th>
               <th>Amount paid</th>
               <th>Remove deduction</th>
             </tr>
+          </thead>
+          <tbody>
             {Object.keys(deductionData).map((deductionKey, index) => <tr key={index}>
               <td>{index + 1}</td>
               <td>{deductionData[deductionKey].description}</td>
               <td>£{(deductionData[deductionKey].value / 100).toFixed(2)}</td>
-              <td onClick={() => removeDeduction(deductionKey)}>Remove</td>
+              <td><a onClick={() => removeDeduction(deductionKey)}>Remove</a></td>
             </tr>)}
-          </tbody>}
-        </table>
+          </tbody>
+        </table>}
       </section>
     )
   }
