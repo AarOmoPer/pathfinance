@@ -44,7 +44,6 @@ class Report extends React.Component {
               <section className="section" style={{ width: "260px" }}>
                 <aside className="menu">
                   <h3 className="title is-large is-size-3 has-text-grey">Pathfinance</h3>
-                  <p>Hello, {"Joshua"}</p>
                   <p class="menu-label">
                     Report date
                   </p>
